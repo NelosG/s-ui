@@ -10,6 +10,7 @@ import (
 
 	"github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing/common"
+	E "github.com/sagernet/sing/common/exceptions"
 	F "github.com/sagernet/sing/common/format"
 	"github.com/sagernet/sing/common/observable"
 	"github.com/sagernet/sing/service/filemanager"
@@ -148,12 +149,19 @@ func (f *defaultFactory) NewLogger(tag string) log.ContextLogger {
 	return &observableLogger{f, tag}
 }
 
+// Entries go to the panel's own log, not to an observer, so the Clash API log stream has
+// nothing to follow; subscribing used to dereference the nil observer and panic the handler.
 func (f *defaultFactory) Subscribe() (subscription observable.Subscription[log.Entry], done <-chan struct{}, err error) {
+	if f.observer == nil {
+		return nil, nil, E.New("log stream not available")
+	}
 	return f.observer.Subscribe()
 }
 
 func (f *defaultFactory) UnSubscribe(sub observable.Subscription[log.Entry]) {
-	f.observer.UnSubscribe(sub)
+	if f.observer != nil {
+		f.observer.UnSubscribe(sub)
+	}
 }
 
 type observableLogger struct {

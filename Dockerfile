@@ -37,6 +37,9 @@ RUN CRONET_ARCH="$TARGETARCH" && \
     chmod 755 ./libcronet.so
 
 COPY . .
+# fork: go.mod replaces sing-box with ../sing-box; build with
+#   docker build --build-context sing-box=../sing-box .
+COPY --from=sing-box . /sing-box
 COPY --from=front-builder /app/dist/ /app/web/html/
 
 RUN if [ "$TARGETARCH" = "arm" ]; then export GOARM=7; [ "$TARGETVARIANT" = "v6" ] && export GOARM=6; fi; \

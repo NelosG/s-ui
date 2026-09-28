@@ -225,3 +225,6 @@ require (
 	lukechampine.com/blake3 v1.3.0 // indirect
 	zombiezen.com/go/capnproto2 v2.18.2+incompatible // indirect
 )
+
+// fork: sing-box with the fast-failover urltest engine, kept next to this repo
+replace github.com/sagernet/sing-box => ../sing-box

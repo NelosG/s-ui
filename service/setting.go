@@ -56,6 +56,10 @@ var protectedSettings = map[string]bool{
 	"version":         true,
 	"globalResetLast": true,
 	"maintenance":     true,
+	// written by the pool updater, read through its own endpoint
+	"poolSubLast":      true,
+	"poolSubDeadSince": true,
+	"poolSubRemoved":   true,
 }
 
 var defaultValueMap = map[string]string{
@@ -91,6 +95,18 @@ var defaultValueMap = map[string]string{
 	"globalResetLast":    "0",
 	"config":             defaultConfig,
 	"version":            config.GetVersion(),
+	// fork: provider subscription feeding the proxy pool
+	"poolSubUrls":      "",
+	"poolSubUA":        "v2rayTun/1.0",
+	"poolSubInterval":  "360",
+	"poolSubProtocols": "vless,trojan,hysteria2",
+	"poolSubSkip":      "XHTTP|^🇷🇺 Россия \\|",
+	"poolSubAddNew":    "true",
+	"poolSubLast":      "",
+	// days a pool node may stay dead before it is removed; 0 keeps them
+	"poolSubRemoveAfter": "7",
+	"poolSubDeadSince":   "{}",
+	"poolSubRemoved":     "{}",
 }
 
 type SettingService struct {

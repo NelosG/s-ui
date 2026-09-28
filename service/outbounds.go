@@ -80,9 +80,14 @@ func (s *OutboundService) Save(tx *gorm.DB, act string, data json.RawMessage) er
 				if err != nil {
 					return err
 				}
-				err = corePtr.RemoveOutbound(oldTag)
-				if err != nil && err != os.ErrInvalid {
-					return err
+				// Same tag: Create below replaces the running outbound in one step. Removing
+				// it first fails for any node a group depends on ("is depended by"), and
+				// the core had already dropped it from its tables by then.
+				if oldTag != outbound.Tag {
+					err = corePtr.RemoveOutbound(oldTag)
+					if err != nil && err != os.ErrInvalid {
+						return err
+					}
 				}
 			}
 			err = corePtr.AddOutbound(configData)

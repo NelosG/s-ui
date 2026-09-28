@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/alireza0/s-ui/database"
@@ -28,6 +29,7 @@ type ApiService struct {
 	service.PanelService
 	service.StatsService
 	service.ServerService
+	service.PoolSubService
 }
 
 func (a *ApiService) LoadData(c *gin.Context) {
@@ -470,6 +472,25 @@ func (a *ApiService) GetCheckOutbound(c *gin.Context) {
 	link := c.Query("link")
 	result := a.ConfigService.CheckOutbound(tag, link)
 	jsonObj(c, result, nil)
+}
+
+func (a *ApiService) GetHealth(c *gin.Context) {
+	result, err := a.ConfigService.Health()
+	jsonObj(c, result, err)
+}
+
+func (a *ApiService) GetPoolSub(c *gin.Context) {
+	jsonObj(c, a.PoolSubService.LastReport(), nil)
+}
+
+func (a *ApiService) PoolSubUpdate(c *gin.Context) {
+	report, err := a.PoolSubService.Run()
+	jsonObj(c, report, err)
+}
+
+func (a *ApiService) PoolSubCheck(c *gin.Context) {
+	result, err := a.PoolSubService.Check(strings.Fields(c.Request.FormValue("urls")))
+	jsonObj(c, result, err)
 }
 
 func (a *ApiService) GetCertPing(c *gin.Context) {

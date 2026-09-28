@@ -63,6 +63,10 @@ func (c *CronJob) Start(loc *time.Location, trafficAge int, statsBucketSeconds i
 	}
 	// Start core if it is not running
 	addJob("@every 5s", NewCheckCoreJob(), "core watchdog")
+	// provider subscription -> proxy pool, interval comes from settings
+	addJob("@every 5m", NewPoolSubJob(), "pool subscription")
+	// engine events and per-minute node numbers kept on disk for later analysis
+	addJob("@every 30s", NewTelemetryJob(), "telemetry")
 	// database WAL checkpoint
 	addJob("@every 10m", NewWALCheckpointJob(), "WAL checkpoint")
 

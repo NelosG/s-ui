@@ -52,6 +52,10 @@ func (a *APIv2Handler) postHandler(c *gin.Context) {
 		a.ApiService.RestartApp(c)
 	case "restartSb":
 		a.ApiService.RestartSb(c)
+	case "poolSubUpdate":
+		a.ApiService.PoolSubUpdate(c)
+	case "poolSubCheck":
+		a.ApiService.PoolSubCheck(c)
 	case "maintenance":
 		a.ApiService.SetMaintenance(c)
 	case "resetTraffic":
@@ -105,6 +109,10 @@ func (a *APIv2Handler) getHandler(c *gin.Context) {
 		a.ApiService.GetDb(c)
 	case "checkOutbound":
 		a.ApiService.GetCheckOutbound(c)
+	case "health":
+		a.ApiService.GetHealth(c)
+	case "poolSub":
+		a.ApiService.GetPoolSub(c)
 	default:
 		jsonMsg(c, "failed", common.NewError("unknown action: ", action))
 	}

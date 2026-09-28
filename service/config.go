@@ -11,6 +11,7 @@ import (
 	"github.com/alireza0/s-ui/database/model"
 	"github.com/alireza0/s-ui/logger"
 	"github.com/alireza0/s-ui/util/common"
+	"github.com/sagernet/sing-box/protocol/group"
 )
 
 var (
@@ -359,6 +360,22 @@ func (s *ConfigService) stopCoreLocked() error {
 	}
 	logger.Info("sing-box stopped")
 	return nil
+}
+
+// Health reports node health from the forked urltest engine.
+func (s *ConfigService) Health() (group.HealthSnapshot, error) {
+	if corePtr == nil {
+		return group.HealthSnapshot{}, common.NewError("core not initialized")
+	}
+	return corePtr.Health()
+}
+
+// Flows returns the engine's flow records after seq and its newest sequence number.
+func (s *ConfigService) Flows(seq int64) ([]group.FlowRecord, int64, error) {
+	if corePtr == nil {
+		return nil, 0, common.NewError("core not initialized")
+	}
+	return corePtr.Flows(seq)
 }
 
 func (s *ConfigService) CheckOutbound(tag string, link string) core.CheckOutboundResult {
